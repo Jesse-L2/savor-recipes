@@ -1,7 +1,9 @@
-from django.shortcuts import render
-from .models import Author, Recipe
+from rest_framework import viewsets
+from .models import Recipe, Author
+from .serializers import RecipeSerializer
+from rest_framework.permissions import IsAuthenticated
 
-# Create your views here.
-def recipesView(request):
-    recipes = Recipe.objects.all()
-    return render(request, 'recipes.html', {'recipes': recipes})
+class RecipeView(viewsets.ModelViewSet):
+    queryset = Recipe.objects.all()
+    serializer_class = RecipeSerializer
+    permission_classes = [IsAuthenticated]
