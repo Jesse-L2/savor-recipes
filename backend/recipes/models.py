@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 
 class Author(models.Model):
     author_name = models.CharField(max_length=100)
-    author_id = models.ForeignKey(on_delete=models.CASCADE, related_name="recipes")
+    author_id = models.ForeignKey(User, on_delete=models.CASCADE, related_name="recipes")
 
     def __str__(self):
         return self.author_name
