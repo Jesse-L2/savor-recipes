@@ -1,20 +1,33 @@
 import react from "react";
-import { BrowserRouter as Router, Route } from "react-router-dom";
-import { AuthProvider } from "../context/AuthContext";
+import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 import Login from "./components/Login";
-import Recipes from "./components/Recipes";
+import Register from "./components/Register";
 
-function App() {
+import React from "react";
+
+function Logout() {
+  localStorage.clear();
+  return <Navigate to="/login" />;
+}
+
+function RegisterLogout() {
+  localStorage.clear();
+  return <Register />;
+}
+
+const App = () => {
   return (
-    <div className="App">
-      <Router>
-        <AuthProvider>
-          <Route path="/login" component={Login} />
-          <Route path="/recipes" component={Recipes} />
-        </AuthProvider>
-      </Router>
+    <div>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="/logout" element={<Logout />} />
+          <Route path="/register" element={<RegisterLogout />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </BrowserRouter>
     </div>
   );
-}
+};
 
 export default App;
