@@ -1,5 +1,5 @@
 from rest_framework import viewsets
-from .models import Recipe, Author
+from .__models import Recipe, Author
 from .serializers import RecipeSerializer
 from rest_framework.permissions import IsAuthenticated
 
