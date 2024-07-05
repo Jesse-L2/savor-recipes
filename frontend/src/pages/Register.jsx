@@ -1,7 +1,6 @@
-import React from "react";
-
+import AuthForm from "../components/AuthForm";
 const Register = () => {
-  return <div>Register</div>;
+  return <Form route="/api/user/register/" method="register" />;
 };
 
 export default Register;
