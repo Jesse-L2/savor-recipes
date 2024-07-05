@@ -5,6 +5,7 @@ import React from "react";
 
 const Home = () => {
   const [recipes, setRecipes] = useState("");
+  const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
 
   const getRecipes = () => {
@@ -44,7 +45,39 @@ const Home = () => {
       .catch((err) => alert(err));
   };
 
-  return <div>Home</div>;
+  return (
+    <div>
+      <h2>Recipes</h2>
+      <div>
+        {recipes.map((recipe) => (
+          <Recipe recipe={recipe} onDelete={deleteRecipe} key={recipe.id} />
+        ))}
+      </div>
+      <h2>Add a Recipe</h2>
+      <form onSubmit={createRecipe}>
+        <label htmlFor="title">Title:</label>
+        <br />
+        <input
+          type="text"
+          id="title"
+          name="title"
+          onChange={(e) => SVGTextPositioningElement(e.target.value)}
+          required
+        />
+        <label htmlFor="content">Content:</label>
+        <br />
+        <textarea
+          id="content"
+          name="content"
+          value={content}
+          onChange={(e) => setContent(e.target.value)}
+          required
+        ></textarea>
+        <br />
+        <input type="submit" value="Submit"></input>
+      </form>
+    </div>
+  );
 };
 
 export default Home;
