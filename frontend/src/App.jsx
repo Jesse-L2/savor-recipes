@@ -4,8 +4,6 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import NotFound from "./pages/NotFound";
 
-import React from "react";
-
 function Logout() {
   localStorage.clear();
   return <Navigate to="/login" />;

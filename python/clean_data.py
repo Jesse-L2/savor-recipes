@@ -24,7 +24,8 @@ cleaned_df.to_csv('cleaned_recipes_final.csv')'''
 
 
 # estbalish db connection
-df = pd.read_csv('cleaned_recipes_final.csv')
+# df = pd.read_csv('cleaned_recipes_final.csv')
+df = pd.read_csv('recipes_data.csv')
 conn_string = f'postgresql://{USER}:{PASS}@{HOST}/{DB}'
 
 db = create_engine(conn_string)
@@ -39,6 +40,24 @@ pg_conn = psycopg2.connect(database=DB,
 pg_conn.autocommit = True
 
 curs = pg_conn.cursor()
+
+create_sql_table = '''
+CREATE TABLE IF NOT EXISTS recipes (
+    recipe_id INTEGER,
+    recipe_name VARCHAR(150),
+    author_id INTEGER,
+    author_name VARCHAR(100),
+    total_time VARCHAR(100),
+    image TEXT,
+    ingredients_quantity TEXT,
+    ingredients TEXT,
+    review_avg NUMERIC,
+    review_count INTEGER,
+    servings NUMERIC,
+    instructions TEXT
+);
+'''
+curs.execute(create_sql_table)
 
 
 
@@ -64,7 +83,7 @@ CREATE TABLE IF NOT EXISTS recipes (recipe_id integer,
 curs.execute(create_sql_table)
 print(df)
 
-df.to_sql('recipes', con=conn, if_exists='replace')
+df.to_sql('recipes', con=conn, if_exists='replace', index=False)
 
 sql1 = '''SELECT * FROM recipes;'''
 curs.execute(sql1)
