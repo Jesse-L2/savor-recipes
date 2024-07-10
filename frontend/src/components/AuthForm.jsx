@@ -3,8 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { ACCESS_TOKEN, REFRESH_TOKEN } from "../constants";
 import api from "../api";
 
-import React from "react";
-
 const AuthForm = ({ route, method }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
