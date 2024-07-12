@@ -1,8 +1,7 @@
 import { useContext } from "react";
-import AuthContext from "../context/AuthContext";
 
 const Login = () => {
-  const { loginUser } = useContext(AuthContext);
+  const { loginUser } = useContext();
 
   return (
     <form onSubmit={loginUser}>
