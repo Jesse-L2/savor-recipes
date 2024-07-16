@@ -28,7 +28,7 @@ const AuthForm = ({ route, method }) => {
 
   return (
     <div>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} className="auth-form">
         <h2>{name}</h2>
         <input
           type="text"

@@ -1,33 +1,23 @@
 import React, { useContext, useEffect, useState } from "react";
-import axios from "../axios";
-import AuthContext from "../../context/AuthContext";
 
-const Recipes = () => {
-  const { authTokens } = useContext(AuthContext);
-  const [recipes, setRecipes] = useState([]);
-
-  useEffect(() => {
-    axios
-      .get("recipes/", {
-        headers: {
-          Authorization: `Bearer ${authTokens.access}`,
-        },
-      })
-      .then((response) => {
-        setRecipes(response.data);
-      });
-  }, [authTokens]);
+const Recipe = ({ recipe, onDelete }) => {
+  const formattedDate = new Date(note.created_at).toLocaleDateString("en-US");
 
   return (
-    <div>
-      <h2>Recipes</h2>
-      <ul>
-        {recipes.map((recipe) => (
+    <>
+      <h2>Recipe</h2>
+      <p>{recipe.title}</p>
+      <p>{recipe.content}</p>
+      <p>{formattedDate}</p>
+      <button onClick={() => onDelete(recipe.id)}>Delete</button>
+      {/* <ul>
+        {recipe.map((recipe) => (
           <li key={recipe.id}>{recipe.title}</li>
+          <li>{recipe.content}</li>
         ))}
-      </ul>
-    </div>
+      </ul> */}
+    </>
   );
 };
 
-export default Recipes;
+export default Recipe;
