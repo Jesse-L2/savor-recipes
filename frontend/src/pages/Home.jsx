@@ -1,18 +1,21 @@
 import { useState, useEffect } from "react";
 import api from "../api";
-
-import React from "react";
+import Recipe from "../components/Recipe";
 
 const Home = () => {
   const [recipes, setRecipes] = useState("");
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
 
+  useEffect(() => {
+    getRecipes();
+  }, []);
+
   const getRecipes = () => {
     api
-      .get("/recipes/")
-      .then((response) => {
-        setRecipes(response.data);
+      .get("/api/recipes/")
+      .then((res) => {
+        setRecipes(res.data);
       })
       .catch((err) => {
         console.log(err);
@@ -22,7 +25,7 @@ const Home = () => {
   const createRecipe = (e) => {
     e.preventDefault();
     api
-      .post("/backend/recipe/", {
+      .post("/api/recipe/", {
         title: e.target.title.value,
         content: e.target.content.value,
       })
@@ -36,7 +39,7 @@ const Home = () => {
 
   const deleteRecipe = (id) => {
     api
-      .delete(`/backend/recipe/${id}`)
+      .delete(`/api/recipe/${id}`)
       .then((res) => {
         if (res.status === 204) alert("Recipe deleted");
         else alert("Failed to delete recipe");
@@ -61,7 +64,8 @@ const Home = () => {
           type="text"
           id="title"
           name="title"
-          onChange={(e) => SVGTextPositioningElement(e.target.value)}
+          onChange={(e) => setTitle(e.target.value)}
+          value="title"
           required
         />
         <label htmlFor="content">Content:</label>

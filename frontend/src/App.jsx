@@ -1,4 +1,3 @@
-import react from "react";
 import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -24,9 +23,9 @@ const App = () => {
           <Route
             path="/"
             element={
-              // <ProtectedRoute>
-              <Home />
-              // </ProtectedRoute>
+              <ProtectedRoute>
+                <Home />
+              </ProtectedRoute>
             }
           />
           <Route path="/login" element={<Login />} />
