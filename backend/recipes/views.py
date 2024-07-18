@@ -4,6 +4,7 @@ from .models import Recipe, Author
 from .serializers import RecipeSerializer, UserSerializer
 from rest_framework.permissions import IsAuthenticated, AllowAny
 
+# Django view is a Python function that takes http requests and returns an http response
 class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     serializer_class = RecipeSerializer

@@ -1,4 +1,4 @@
-# Django view is a Python function that takes http requests and returns an http response
+# Serializer converts Django model instances to Python data types for rendering in JSON or other content types
 from rest_framework import serializers
 from .models import Recipe
 from django.contrib.auth.models import User
