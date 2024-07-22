@@ -8,7 +8,7 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     serializer_class = RecipeSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
     def get_self_queryset(self):
         user = self.request.user
         return Recipe.objects.filter(author_id=user.id)
