@@ -1,16 +1,16 @@
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
-from recipes.views import CreateUserView
+from recipes.views import CreateUserView, RecipeViewSet, RecipeDelete
 from rest_framework.routers import DefaultRouter
-from recipes.views import RecipeViewSet
+
 
 router = DefaultRouter()
 
 urlpatterns = [
     path('', RecipeViewSet.as_view({'get':'list'}), name='home'),
     path('admin/', admin.site.urls),
-    path('api/', include('recipes.urls')),
+    path('recipes/', include('recipes.urls')),
     path('api-auth/', include('rest_framework.urls')),
     path('api/token/', TokenObtainPairView.as_view(), name='get_token'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='refresh'),

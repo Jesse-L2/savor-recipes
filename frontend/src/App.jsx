@@ -1,12 +1,12 @@
 import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
+import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import NotFound from "./pages/NotFound";
-import Home from "./pages/Home";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 function Logout() {
-  localStorage.clear();
+  localStorage.clear(); // clear refresh and access token
   return <Navigate to="/login" />;
 }
 

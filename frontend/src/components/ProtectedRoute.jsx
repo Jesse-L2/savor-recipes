@@ -1,20 +1,22 @@
+import { useState, useEffect } from "react";
 import { Navigate } from "react-router-dom";
+import PropTypes from "prop-types";
 import { jwtDecode } from "jwt-decode";
 import api from "../api";
 import { REFRESH_TOKEN, ACCESS_TOKEN } from "../constants";
-import { useState, useEffect } from "react";
-import PropTypes from "prop-types";
 
 function ProtectedRoute({ children }) {
   const [isAuthorized, setIsAuthorized] = useState(null);
 
   useEffect(() => {
+    // Calls auth, if token not expired, set authorized, otherwise attempt to get new token, otherwise set not authorized
     auth().catch(() => setIsAuthorized(false));
   });
 
   const refreshToken = async () => {
     const refreshToken = localStorage.getItem(REFRESH_TOKEN);
     try {
+      // Send token to backend
       const res = await api.post("/api/token/refresh/", {
         refresh: refreshToken,
       });
@@ -24,8 +26,8 @@ function ProtectedRoute({ children }) {
       } else {
         setIsAuthorized(false);
       }
-    } catch (error) {
-      console.log(error);
+    } catch (err) {
+      console.log(err);
       setIsAuthorized(false);
     }
   };

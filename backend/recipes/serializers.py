@@ -6,8 +6,8 @@ from django.contrib.auth.models import User
 class RecipeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Recipe
-        fields = ["recipe_id", "title", "content", "created_at", "total_time", "images", "ingredients", "ingredient_quantities", "rating", "review_count", "servings", "instructions"]
-
+        fields = ["recipe_id", "title", "content", "created_at", "total_time", "images", "ingredients", "ingredient_quantities", "rating", "review_count", "servings", "instructions", "author"]
+ 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
