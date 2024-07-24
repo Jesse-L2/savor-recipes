@@ -4,6 +4,7 @@ import { ACCESS_TOKEN, REFRESH_TOKEN } from "../constants";
 import api from "../api";
 
 const AuthForm = ({ route, method }) => {
+  // method - register or login
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
@@ -32,12 +33,14 @@ const AuthForm = ({ route, method }) => {
         <h2>{name}</h2>
         <input
           type="text"
+          className="auth-form-input"
           placeholder="Username"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
         />
         <input
           type="password"
+          className="auth-form-input"
           placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
