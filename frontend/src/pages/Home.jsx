@@ -16,6 +16,7 @@ const Home = () => {
       .get("/api/recipes/")
       .then((res) => {
         setRecipes(res.data);
+        console.log(res.data);
       })
       .catch((err) => {
         console.log(err);
@@ -39,7 +40,7 @@ const Home = () => {
 
   const deleteRecipe = (id) => {
     api
-      .delete(`/api/recipe/${id}`)
+      .delete(`/api/recipe/${id}/`)
       .then((res) => {
         if (res.status === 204) alert("Recipe deleted");
         else alert("Failed to delete recipe");
@@ -52,9 +53,9 @@ const Home = () => {
     <div>
       <h2>Recipes</h2>
       <div>
-        {recipes.map((recipe) => (
+        {/* {recipes.map((recipe) => (
           <Recipe recipe={recipe} onDelete={deleteRecipe} key={recipe.id} />
-        ))}
+        ))} */}
       </div>
       <h2>Add a Recipe</h2>
       <form onSubmit={createRecipe}>

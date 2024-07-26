@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ACCESS_TOKEN, REFRESH_TOKEN } from "../constants";
 import api from "../api";
+import PropTypes from "prop-types";
 
 const AuthForm = ({ route, method }) => {
   // method - register or login
@@ -18,37 +19,47 @@ const AuthForm = ({ route, method }) => {
       if (method === "login") {
         localStorage.setItem(ACCESS_TOKEN, res.data.access);
         localStorage.setItem(REFRESH_TOKEN, res.data.refresh);
+        console.log(ACCESS_TOKEN);
+        console.log(REFRESH_TOKEN);
         navigate("/");
       } else {
         navigate("/login");
       }
     } catch (err) {
+      console.log(ACCESS_TOKEN);
+      console.log(REFRESH_TOKEN);
       alert(err);
     }
   };
 
   return (
-    <div>
-      <form onSubmit={handleSubmit} className="auth-form">
-        <h2>{name}</h2>
-        <input
-          type="text"
-          className="auth-form-input"
-          placeholder="Username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-        />
-        <input
-          type="password"
-          className="auth-form-input"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        <button type="submit">{name}</button>
-      </form>
-    </div>
+    <form onSubmit={handleSubmit} className="form-container">
+      <h1>{name}</h1>
+      <input
+        className="form-input"
+        type="text"
+        value={username}
+        onChange={(e) => setUsername(e.target.value)}
+        placeholder="User Name"
+      />
+      <input
+        className="form-input"
+        type="password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        placeholder="Password"
+      />
+
+      <button className="form-button" type="submit">
+        {name}
+      </button>
+    </form>
   );
+};
+
+AuthForm.propTypes = {
+  route: PropTypes.string.isRequired,
+  method: PropTypes.oneOf(["login", "register"]).isRequired,
 };
 
 export default AuthForm;
