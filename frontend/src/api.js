@@ -5,7 +5,8 @@ import { ACCESS_TOKEN } from "./constants";
 // const apiUrl = import.meta.env.VITE_API_URL;
 
 const api = axios.create({
-  baseURL: "http://127.0.0.1:8000",
+  // baseURL: "http://127.0.0.1:8000",
+  baseURL: import.meta.env.VITE_API_URL,
 });
 
 api.interceptors.request.use(
@@ -14,14 +15,16 @@ api.interceptors.request.use(
     console.log(token);
     if (token) {
       // pass a jwt access token
+      console.log(`Token: Bearer ${token}`);
       config.headers.Authorization = `Bearer ${token}`;
+    }
+    if (!token) {
+      console.log("No token found.");
+      // Redirect to login page
     }
     return config;
   },
   (error) => {
-    console.log(error.response.data);
-    console.log(error.response.status);
-    console.log(error.response.headers);
     return Promise.reject(error);
   }
 );

@@ -4,21 +4,23 @@ import { ACCESS_TOKEN, REFRESH_TOKEN } from "../constants";
 import api from "../api";
 import PropTypes from "prop-types";
 
-const AuthForm = ({ route, method }) => {
+function AuthForm({ route, method }) {
   // method - register or login
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
   const name = method === "login" ? "Login" : "Register";
+  console.log(method);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const res = await api.post(route, { username, password });
       if (method === "login") {
-        console.log(res.data.access);
-        console.log(res.data.refresh);
+        // console.log(`Method is ${method}`);
+        // console.log(`Access: ${res.data.access}`);
+        // console.log(`Refresh: ${res.data.refresh}`);
         localStorage.setItem(ACCESS_TOKEN, res.data.access);
         localStorage.setItem(REFRESH_TOKEN, res.data.refresh);
         console.log(ACCESS_TOKEN);
@@ -28,8 +30,8 @@ const AuthForm = ({ route, method }) => {
         navigate("/login");
       }
     } catch (err) {
-      console.log(ACCESS_TOKEN);
-      console.log(REFRESH_TOKEN);
+      // console.log(ACCESS_TOKEN);
+      // console.log(REFRESH_TOKEN);
       alert(err);
     }
   };
@@ -57,7 +59,7 @@ const AuthForm = ({ route, method }) => {
       </button>
     </form>
   );
-};
+}
 
 AuthForm.propTypes = {
   route: PropTypes.string.isRequired,
