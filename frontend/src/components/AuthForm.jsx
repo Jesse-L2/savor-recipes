@@ -4,14 +4,13 @@ import { ACCESS_TOKEN, REFRESH_TOKEN } from "../constants";
 import api from "../api";
 import PropTypes from "prop-types";
 
-function AuthForm({ route, method }) {
+const AuthForm = ({ route, method }) => {
   // method - register or login
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
   const name = method === "login" ? "Login" : "Register";
-  console.log(method);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -23,8 +22,6 @@ function AuthForm({ route, method }) {
         // console.log(`Refresh: ${res.data.refresh}`);
         localStorage.setItem(ACCESS_TOKEN, res.data.access);
         localStorage.setItem(REFRESH_TOKEN, res.data.refresh);
-        console.log(ACCESS_TOKEN);
-        console.log(REFRESH_TOKEN);
         navigate("/");
       } else {
         navigate("/login");
@@ -59,7 +56,7 @@ function AuthForm({ route, method }) {
       </button>
     </form>
   );
-}
+};
 
 AuthForm.propTypes = {
   route: PropTypes.string.isRequired,

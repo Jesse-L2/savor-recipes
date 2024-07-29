@@ -66,7 +66,7 @@ const Home = () => {
           id="title"
           name="title"
           onChange={(e) => setTitle(e.target.value)}
-          value="title"
+          value={title}
           required
         />
         <label htmlFor="content">Content:</label>
