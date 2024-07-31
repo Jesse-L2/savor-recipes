@@ -6,6 +6,10 @@ const Home = () => {
   const [recipes, setRecipes] = useState("");
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
+  const [ingredients, setIngredients] = useState("");
+  const [instructions, setInstructions] = useState("");
+  const [totalTime, setTotalTime] = useState("");
+  const [servings, setServings] = useState("");
 
   useEffect(() => {
     getRecipes();
@@ -29,6 +33,11 @@ const Home = () => {
       .post("/api/recipe/", {
         title: e.target.title.value,
         content: e.target.content.value,
+        ingredients: e.target.ingredients.value,
+        instructions: e.target.instructions.value,
+        total_time: e.target.total_time.value,
+        images: e.target.images.value,
+        servings: e.target.servings.value,
       })
       .then((response) => {
         if (response.status === 201) alert("Recipe created");
@@ -79,7 +88,58 @@ const Home = () => {
           required
         ></textarea>
         <br />
-        <input type="submit" value="Submit"></input>
+        <label htmlFor="ingredients">Ingredients:</label>
+        <br />
+        <input
+          type="text"
+          id="ingredients"
+          name="ingredients"
+          onChange={(e) => setIngredients(e.target.value)}
+          value={ingredients}
+          required
+        />
+        <label htmlFor="instructions">Instructions:</label>
+        <br />
+        <textarea
+          id="instructions"
+          name="instructions"
+          value={instructions}
+          onChange={(e) => setInstructions(e.target.value)}
+          required
+        ></textarea>
+        <br />
+        <label htmlFor="total_time">Total Time:</label>
+        <br />
+        <input
+          type="text"
+          id="total_time"
+          name="total_time"
+          onChange={(e) => setTotalTime(e.target.value)}
+          value={totalTime}
+          required
+        />
+        <label htmlFor="images">Images:</label>
+        <br />
+        <input
+          type="text"
+          id="images"
+          name="images"
+          onChange={(e) => setImages(e.target.value)}
+          value={images}
+          required
+        />
+        <label htmlFor="servings">Servings:</label>
+        <br />
+        <input
+          type="text"
+          id="servings"
+          name="servings"
+          onChange={(e) => setServings(e.target.value)}
+          value={servings}
+          required
+        />
+        <br />
+        <input type="submit" value="Submit" />
       </form>
     </div>
   );
