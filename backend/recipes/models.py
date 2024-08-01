@@ -19,4 +19,4 @@ class Recipe(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name="recipes")
 
     def __str__(self):
-        return self.title, self.recipe_id
+        return f"Recipe({self.recipe_id}): {self.title}"
