@@ -17,9 +17,9 @@ const AuthForm = ({ route, method }) => {
     try {
       const res = await api.post(route, { username, password });
       if (method === "login") {
-        // console.log(`Method is ${method}`);
-        // console.log(`Access: ${res.data.access}`);
-        // console.log(`Refresh: ${res.data.refresh}`);
+        console.log(`Method is ${method}`);
+        console.log(`Access: ${res.data.access}`);
+        console.log(`Refresh: ${res.data.refresh}`);
         localStorage.setItem(ACCESS_TOKEN, res.data.access);
         localStorage.setItem(REFRESH_TOKEN, res.data.refresh);
         navigate("/");
@@ -29,7 +29,7 @@ const AuthForm = ({ route, method }) => {
     } catch (err) {
       // console.log(ACCESS_TOKEN);
       // console.log(REFRESH_TOKEN);
-      alert(err);
+      alert(`${err.message}`);
     }
   };
 

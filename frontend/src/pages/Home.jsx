@@ -10,6 +10,7 @@ const Home = () => {
   const [instructions, setInstructions] = useState("");
   const [totalTime, setTotalTime] = useState("");
   const [servings, setServings] = useState("");
+  const [image, setImage] = useState("");
 
   useEffect(() => {
     getRecipes();
@@ -36,7 +37,7 @@ const Home = () => {
         ingredients: e.target.ingredients.value,
         instructions: e.target.instructions.value,
         total_time: e.target.total_time.value,
-        images: e.target.images.value,
+        image: e.target.image.value,
         servings: e.target.servings.value,
       })
       .then((response) => {
@@ -118,15 +119,14 @@ const Home = () => {
           value={totalTime}
           required
         />
-        <label htmlFor="images">Images:</label>
+        <label htmlFor="image">Image:</label>
         <br />
         <input
-          type="text"
-          id="images"
-          name="images"
-          onChange={(e) => setImages(e.target.value)}
-          value={images}
-          required
+          type="file"
+          id="image"
+          name="image"
+          onChange={(e) => setImage(e.target.value)}
+          value={image}
         />
         <label htmlFor="servings">Servings:</label>
         <br />
