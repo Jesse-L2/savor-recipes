@@ -1,13 +1,18 @@
+import os
 import pandas as pd
 import numpy as np
 import psycopg2
+from dotenv import load_dotenv
 from sqlalchemy import create_engine
 
-DB = 'recipes'
-USER = 'postgres'
-PASS = 'password123'
-HOST = '127.0.0.1'
-PORT = '5432'
+# Load environment variables from .env file
+load_dotenv()
+
+DB = os.getenv('DB')
+USER = os.getenv('USER')
+PASS = os.getenv('PASS')
+HOST = os.getenv('HOST')
+PORT = os.getenv('PORT')
 
 df = pd.read_csv('recipes_data.csv')
 conn_string = f'postgresql://{USER}:{PASS}@{HOST}/{DB}'
