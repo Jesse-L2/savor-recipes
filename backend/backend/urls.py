@@ -14,5 +14,5 @@ urlpatterns = [
     path('api/user/register/', CreateUserView.as_view(), name='register'),
     path('api-auth/', include('rest_framework.urls')),
     path('', RecipeViewSet.as_view({'get':'list'}), name='home'),
-    path('recipes/', include('recipes.urls')),
+    path('api/recipes/', include('recipes.urls')),
 ]

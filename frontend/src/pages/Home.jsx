@@ -31,7 +31,7 @@ const Home = () => {
   const createRecipe = (e) => {
     e.preventDefault();
     api
-      .post("/api/recipe/", {
+      .post("/api/recipes/", {
         title: e.target.title.value,
         content: e.target.content.value,
         ingredients: e.target.ingredients.value,
@@ -50,7 +50,7 @@ const Home = () => {
 
   const deleteRecipe = (id) => {
     api
-      .delete(`/api/recipe/${id}/`)
+      .delete(`/api/recipes/${id}/`)
       .then((res) => {
         if (res.status === 204) alert("Recipe deleted");
         else alert("Failed to delete recipe");
