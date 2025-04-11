@@ -1,0 +1,6 @@
+savor-recipes/
+  ├── backend/          # Django project
+  │   ├── api/          # Django REST API app
+  │   ├── recipes/      # Django recipes app
+  │   └── users/        # Django users app
+  └── frontend/         # React application
