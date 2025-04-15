@@ -1,9 +1,11 @@
 import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
-import Home from "./pages/Home";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
-import NotFound from "./pages/NotFound";
+import Home from "./components/Home";
+import Login from "./components/Login";
+import Register from "./components/Register";
+import NotFound from "./components/NotFound";
 import ProtectedRoute from "./components/ProtectedRoute";
+import RecipeDetail from "./components/RecipeDetail";
+import RecipeList from "./components/RecipeList";
 
 function Logout() {
   localStorage.clear(); // clear refresh and access token
@@ -23,14 +25,16 @@ const App = () => {
           <Route
             path="/"
             element={
-              // <ProtectedRoute>
-              <Home />
-              // </ProtectedRoute>
+              <ProtectedRoute>
+                <Home />
+              </ProtectedRoute>
             }
           />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<RegisterLogout />} />
           <Route path="/logout" element={<Logout />} />
+          <Route path="/recipes" element={<RecipeList />} />
+          <Route path="/recipes/:id" element={<RecipeDetail />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

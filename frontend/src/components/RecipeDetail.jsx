@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 
-const Recipe = ({ recipe, onDelete }) => {
+const RecipeDetail = ({ recipe, onDelete }) => {
   const formattedDate = new Date(recipe.created_at).toLocaleDateString("en-US");
 
   return (
@@ -14,4 +14,4 @@ const Recipe = ({ recipe, onDelete }) => {
   );
 };
 
-export default Recipe;
+export default RecipeDetail;

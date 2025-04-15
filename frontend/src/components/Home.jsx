@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import api from "../api";
-import Recipe from "../components/Recipe";
+import RecipeDetail from "./RecipeDetail";
 
 const Home = () => {
   const [recipes, setRecipes] = useState("");
