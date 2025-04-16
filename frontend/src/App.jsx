@@ -6,6 +6,7 @@ import NotFound from "./components/NotFound";
 import ProtectedRoute from "./components/ProtectedRoute";
 import RecipeDetail from "./components/RecipeDetail";
 import RecipeList from "./components/RecipeList";
+import Landing from "./components/Landing";
 
 function Logout() {
   localStorage.clear(); // clear refresh and access token
