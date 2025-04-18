@@ -11,7 +11,7 @@ function ProtectedRoute({ children }) {
   useEffect(() => {
     // Calls auth, if token not expired, set authorized, otherwise attempt to get new token, otherwise set not authorized
     auth().catch(() => setIsAuthorized(false));
-  });
+  }, []);
 
   const refreshToken = async () => {
     const refreshToken = localStorage.getItem(REFRESH_TOKEN);

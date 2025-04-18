@@ -7,6 +7,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import RecipeDetail from "./components/RecipeDetail";
 import RecipeList from "./components/RecipeList";
 import Landing from "./components/Landing";
+import AuthForm from "./components/AuthForm";
 
 function Logout() {
   localStorage.clear(); // clear refresh and access token
@@ -23,8 +24,9 @@ const App = () => {
     <div>
       <BrowserRouter>
         <Routes>
+          <Route path="/" element={<Landing />} />
           <Route
-            path="/"
+            path="/home"
             element={
               <ProtectedRoute>
                 <Home />

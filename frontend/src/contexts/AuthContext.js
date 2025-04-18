@@ -20,7 +20,9 @@ export const AuthProvider = ({ children }) => {
   const fetchUserProfile = async () => {
     try {
       // This assumes you have an endpoint to get the current user's profile
-      const response = await axios.get("http://localhost:8000/api/users/me/");
+      const response = await axios.get(
+        "http://localhost:8000/api/users/current/"
+      );
       setCurrentUser(response.data);
     } catch (error) {
       console.error("Error fetching user profile:", error);
