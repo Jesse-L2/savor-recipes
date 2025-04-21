@@ -1,14 +1,17 @@
 # Serializer converts Django model instances to Python data types for rendering in JSON or other content types
 from rest_framework import serializers
+from django.contrib.auth import get_user_model
 from .models import Recipe
-from users.serializers import UserSerializer
+from users.serializers import PublicUserSerializer
+
+User = get_user_model()
 
 class RecipeSerializer(serializers.ModelSerializer):
     """
     Serializer for Recipe model. Handles nested author (read-only), author_id (write-only),
     makes recipe_id read-only, and images optional.
     """
-    author = UserSerializer(read_only=True)
+    author = PublicUserSerializer(read_only=True)
     author_id = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), source='author', write_only=True)
     images = serializers.ImageField(required=False, allow_null=True)
 
