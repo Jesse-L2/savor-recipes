@@ -54,14 +54,12 @@ class RecipeDelete(viewsets.ModelViewSet):
     def get_queryset(self):
         user = self.request.user
         return Recipe.objects.filter(author=user)  
-class CreateUserView(viewsets.ModelViewSet):
+from rest_framework.generics import CreateAPIView
+
+class RegisterUserView(CreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    
-    def get_permissions(self):
-        if self.action == 'create':
-            return [AllowAny()]
-        return [IsAuthenticated()]
+    permission_classes = [AllowAny]
    
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()

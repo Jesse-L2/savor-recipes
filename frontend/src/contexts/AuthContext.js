@@ -1,11 +1,13 @@
-import React, { createContext, useState, useContext, useEffect } from "react";
+import { createContext, useState, useContext, useEffect } from "react";
+import api from "../api";
+import { ACCESS_TOKEN, REFRESH_TOKEN } from "../constants";
 import axios from "axios";
 
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
-  const [token, setToken] = useState(localStorage.getItem("token"));
+  const [token, setToken] = useState(localStorage.getItem(ACCESS_TOKEN));
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -19,10 +21,7 @@ export const AuthProvider = ({ children }) => {
 
   const fetchUserProfile = async () => {
     try {
-      // This assumes you have an endpoint to get the current user's profile
-      const response = await axios.get(
-        "http://localhost:8000/api/users/current/"
-      );
+      const response = await api.get("/users/current/");
       setCurrentUser(response.data);
     } catch (error) {
       console.error("Error fetching user profile:", error);
@@ -34,13 +33,13 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (username, password) => {
     try {
-      const response = await axios.post("http://localhost:8000/api/token/", {
+      const response = await api.post("/token/", {
         username,
         password,
       });
       const { access, refresh } = response.data;
-      localStorage.setItem("token", access);
-      localStorage.setItem("refreshToken", refresh);
+      localStorage.setItem(ACCESS_TOKEN, access);
+      localStorage.setItem(REFRESH_TOKEN, refresh);
       setToken(access);
       return true;
     } catch (error) {
@@ -51,7 +50,7 @@ export const AuthProvider = ({ children }) => {
 
   const register = async (userData) => {
     try {
-      await axios.post("http://localhost:8000/api/users/", userData);
+      await api.post("/user/register/", userData);
       return await login(userData.username, userData.password);
     } catch (error) {
       console.error("Registration error:", error);
@@ -60,8 +59,8 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("refreshToken");
+    localStorage.removeItem(ACCESS_TOKEN);
+    localStorage.removeItem(REFRESH_TOKEN);
     setToken(null);
     setCurrentUser(null);
     delete axios.defaults.headers.common["Authorization"];

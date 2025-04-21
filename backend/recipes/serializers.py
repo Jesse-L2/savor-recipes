@@ -4,13 +4,19 @@ from .models import Recipe
 from users.serializers import UserSerializer
 
 class RecipeSerializer(serializers.ModelSerializer):
-    user = UserSerializer(read_only=True)
-    user_id = serializers.IntegerField(write_only=True)
+    """
+    Serializer for Recipe model. Handles nested author (read-only), author_id (write-only),
+    makes recipe_id read-only, and images optional.
+    """
+    author = UserSerializer(read_only=True)
+    author_id = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), source='author', write_only=True)
+    images = serializers.ImageField(required=False, allow_null=True)
 
     class Meta:
         model = Recipe
         fields = [
             "recipe_id", "title", "content", "created_at", "total_time", "images",
             "ingredients", "ingredient_quantities", "rating", "review_count", "servings",
-            "instructions", "author"
+            "instructions", "author", "author_id"
         ]
+        read_only_fields = ["recipe_id"]
