@@ -33,7 +33,7 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (username, password) => {
     try {
-      const response = await api.post("/token/", {
+      const response = await api.post("/api/token/", { // changed from '/token/'
         username,
         password,
       });
@@ -41,6 +41,7 @@ export const AuthProvider = ({ children }) => {
       localStorage.setItem(ACCESS_TOKEN, access);
       localStorage.setItem(REFRESH_TOKEN, refresh);
       setToken(access);
+      setCurrentUser(response.data); // unsure if needed
       return true;
     } catch (error) {
       console.error("Login error:", error);

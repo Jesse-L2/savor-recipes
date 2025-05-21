@@ -1,48 +1,49 @@
-import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
-import Home from "./components/Home";
-import Login from "./components/Login";
-import Register from "./components/Register";
-import NotFound from "./components/NotFound";
-import ProtectedRoute from "./components/ProtectedRoute";
-import RecipeDetail from "./components/RecipeDetail";
-import RecipeList from "./components/RecipeList";
-import Landing from "./components/Landing";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import AuthForm from "./components/AuthForm";
+import Dashboard from "./pages/Dashboard";
 
-function Logout() {
-  localStorage.clear(); // clear refresh and access token
-  return <Navigate to="/login" />;
-}
+// Protected route component using our auth context
+const ProtectedRoute = ({ children }) => {
+  const { user, loading } = useAuth();
+  
+  if (loading) {
+    // Show loading spinner or message while checking auth status
+    return <div className="loading">Loading...</div>;
+  }
+  
+  return user ? children : <Navigate to="/login" />;
+};
 
-function RegisterLogout() {
-  localStorage.clear();
-  return <Register />;
-}
-
-const App = () => {
+// The main app needs to be inside the Router but outside the AuthProvider
+// to avoid problems with useNavigate in the AuthProvider
+const AppRoutes = () => {
   return (
-    <div>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Landing />} />
-          <Route
-            path="/home"
-            element={
-              <ProtectedRoute>
-                <Home />
-              </ProtectedRoute>
-            }
-          />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<RegisterLogout />} />
-          <Route path="/logout" element={<Logout />} />
-          <Route path="/recipes" element={<RecipeList />} />
-          <Route path="/recipes/:id" element={<RecipeDetail />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
-    </div>
+    <AuthProvider>
+      <Routes>
+        <Route path="/login" element={<AuthForm route="/token/" method="login" />} />
+        <Route path="/register" element={<AuthForm route="/register/" method="register" />} />
+        <Route 
+          path="/dashboard/*" 
+          element={
+            <ProtectedRoute>
+              <Dashboard />
+            </ProtectedRoute>
+          } 
+        />
+        <Route path="/" element={<Navigate to="/dashboard" />} />
+        <Route path="*" element={<Navigate to="/dashboard" />} />
+      </Routes>
+    </AuthProvider>
   );
 };
+
+function App() {
+  return (
+    <Router>
+      <AppRoutes />
+    </Router>
+  );
+}
 
 export default App;

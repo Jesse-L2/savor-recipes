@@ -1,178 +1,137 @@
-import React, { useState } from "react";
-import axios from "axios";
-import { useAuth } from "../contexts/AuthContext";
+// frontend/src/components/RecipeForm.jsx
+import { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import api from '../api';
 
-const RecipeForm = ({ onRecipeAdded }) => {
-  const { currentUser } = useAuth();
-  const [recipe, setRecipe] = useState({
-    title: "",
-    description: "",
-    ingredients: "",
-    instructions: "",
-    cooking_time: "",
-    image: null,
-    user_id: currentUser?.id,
+const RecipeForm = () => {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const isEdit = !!id;
+  const [formData, setFormData] = useState({
+    title: '',
+    description: '',
+    ingredients: '',
+    instructions: '',
   });
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    if (isEdit) {
+      const fetchRecipe = async () => {
+        try {
+          const response = await api.get(`/api/recipes/${id}/`);
+          setFormData({
+            title: response.data.title,
+            description: response.data.description || '',
+            ingredients: response.data.ingredients || '',
+            instructions: response.data.instructions || '',
+          });
+        } catch (err) {
+          setError('Failed to load recipe');
+          console.error('Error fetching recipe:', err);
+        }
+      };
+      fetchRecipe();
+    }
+  }, [id, isEdit]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setRecipe((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleImageChange = (e) => {
-    setRecipe((prev) => ({ ...prev, image: e.target.files[0] }));
+    setFormData(prev => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
-    setError("");
-
     try {
-      const formData = new FormData();
-      Object.keys(recipe).forEach((key) => {
-        if (recipe[key] !== null) {
-          formData.append(key, recipe[key]);
-        }
-      });
-
-      const response = await axios.post(
-        "http://localhost:8000/api/recipes/",
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
-
-      setRecipe({
-        title: "",
-        description: "",
-        ingredients: "",
-        instructions: "",
-        cooking_time: "",
-        image: null,
-        user_id: currentUser?.id,
-      });
-
-      if (onRecipeAdded) onRecipeAdded(response.data);
+      if (isEdit) {
+        await api.put(`/api/recipes/${id}/`, formData);
+      } else {
+        await api.post('/api/recipes/', formData);
+      }
+      navigate('/dashboard');
     } catch (err) {
-      setError("Failed to create recipe. Please try again.");
-      console.error("Error creating recipe:", err);
-    } finally {
-      setLoading(false);
+      setError('Failed to save recipe');
+      console.error('Error saving recipe:', err);
     }
   };
 
   return (
-    <div className="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-md">
-      <h2 className="text-2xl font-bold mb-6 text-center">Create New Recipe</h2>
-
+    <div className="max-w-3xl mx-auto">
+      <h2 className="text-2xl font-bold mb-6">
+        {isEdit ? 'Edit Recipe' : 'Add New Recipe'}
+      </h2>
+      
       {error && (
-        <div className="mb-4 p-3 bg-red-100 text-red-700 rounded">{error}</div>
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+          {error}
+        </div>
       )}
 
-      <form onSubmit={handleSubmit}>
-        <div className="mb-4">
-          <label className="block text-gray-700 mb-2" htmlFor="title">
-            Recipe Title
-          </label>
+      <form onSubmit={handleSubmit} className="space-y-6 bg-white p-6 rounded-lg shadow">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Title</label>
           <input
             type="text"
-            id="title"
             name="title"
-            value={recipe.title}
+            value={formData.title}
             onChange={handleChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             required
           />
         </div>
 
-        <div className="mb-4">
-          <label className="block text-gray-700 mb-2" htmlFor="description">
-            Description
-          </label>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
           <textarea
-            id="description"
             name="description"
-            value={recipe.description}
+            value={formData.description}
             onChange={handleChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-            rows="3"
+            rows="2"
+            className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
           />
         </div>
 
-        <div className="mb-4">
-          <label className="block text-gray-700 mb-2" htmlFor="ingredients">
-            Ingredients
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Ingredients <span className="text-gray-500">(one per line)</span>
           </label>
           <textarea
-            id="ingredients"
             name="ingredients"
-            value={recipe.ingredients}
+            value={formData.ingredients}
             onChange={handleChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
             rows="5"
-            placeholder="One ingredient per line"
+            className="w-full p-2 border rounded font-mono focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             required
           />
         </div>
 
-        <div className="mb-4">
-          <label className="block text-gray-700 mb-2" htmlFor="instructions">
-            Instructions
-          </label>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Instructions</label>
           <textarea
-            id="instructions"
             name="instructions"
-            value={recipe.instructions}
+            value={formData.instructions}
             onChange={handleChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-            rows="6"
+            rows="8"
+            className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             required
           />
         </div>
 
-        <div className="mb-4">
-          <label className="block text-gray-700 mb-2" htmlFor="cooking_time">
-            Cooking Time (minutes)
-          </label>
-          <input
-            type="number"
-            id="cooking_time"
-            name="cooking_time"
-            value={recipe.cooking_time}
-            onChange={handleChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-            min="1"
-            required
-          />
+        <div className="flex justify-end space-x-3 pt-4">
+          <button
+            type="button"
+            onClick={() => navigate('/dashboard')}
+            className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+          >
+            {isEdit ? 'Update' : 'Create'} Recipe
+          </button>
         </div>
-
-        <div className="mb-6">
-          <label className="block text-gray-700 mb-2" htmlFor="image">
-            Recipe Image
-          </label>
-          <input
-            type="file"
-            id="image"
-            name="image"
-            onChange={handleImageChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-            accept="image/*"
-          />
-        </div>
-
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-blue-300"
-        >
-          {loading ? "Creating..." : "Create Recipe"}
-        </button>
       </form>
     </div>
   );
