@@ -51,14 +51,14 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',  # Should be as high as possible, especially before CommonMiddleware
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',   
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
 ROOT_URLCONF = 'backend.urls'
@@ -161,6 +161,19 @@ CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:5173",
 ]
 
+# CSRF settings
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+]
+
+# Allow credentials (cookies) to be included in cross-origin requests
+CORS_ALLOW_CREDENTIALS = True
+
+# Allow all headers and methods for CORS
+CORS_ALLOW_ALL_HEADERS = True
 CORS_ALLOW_METHODS = [
     'DELETE',
     'GET',
@@ -180,6 +193,24 @@ CORS_ALLOW_HEADERS = [
     'user-agent',
     'x-csrftoken',
     'x-requested-with',
+    'withcredentials',
 ]
 
-CORS_ALLOW_CREDENTIALS = True
+# Session settings
+SESSION_COOKIE_SAMESITE = 'Lax'
+SESSION_COOKIE_SECURE = False  # Set to True in production with HTTPS
+SESSION_COOKIE_HTTPONLY = True
+
+# CSRF settings
+CSRF_USE_SESSIONS = False
+CSRF_COOKIE_HTTPONLY = False  # Allow JavaScript to read CSRF token
+CSRF_COOKIE_SAMESITE = 'Lax'
+CSRF_COOKIE_SECURE = False  # Set to True in production with HTTPS
+CSRF_COOKIE_NAME = 'csrftoken'
+CSRF_HEADER_NAME = 'X-CSRFToken'  # The header your frontend will send
+
+
+# Ensure CSRF cookie is sent with every response
+CSRF_COOKIE_PATH = '/'
+CSRF_FAILURE_VIEW = 'django.views.csrf.csrf_failure'
+
