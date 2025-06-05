@@ -1,4 +1,9 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import AuthForm from "./components/AuthForm";
 import Dashboard from "./pages/Dashboard";
@@ -6,12 +11,12 @@ import Dashboard from "./pages/Dashboard";
 // Protected route component using our auth context
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth();
-  
+
   if (loading) {
     // Show loading spinner or message while checking auth status
     return <div className="loading">Loading...</div>;
   }
-  
+
   return user ? children : <Navigate to="/login" />;
 };
 
@@ -21,15 +26,21 @@ const AppRoutes = () => {
   return (
     <AuthProvider>
       <Routes>
-        <Route path="/login" element={<AuthForm route="/token/" method="login" />} />
-        <Route path="/register" element={<AuthForm route="/register/" method="register" />} />
-        <Route 
-          path="/dashboard/*" 
+        <Route
+          path="/login"
+          element={<AuthForm route="/token/" method="login" />}
+        />
+        <Route
+          path="/register"
+          element={<AuthForm route="/register/" method="register" />}
+        />
+        <Route
+          path="/dashboard/*"
           element={
             <ProtectedRoute>
               <Dashboard />
             </ProtectedRoute>
-          } 
+          }
         />
         <Route path="/" element={<Navigate to="/dashboard" />} />
         <Route path="*" element={<Navigate to="/dashboard" />} />
@@ -41,7 +52,6 @@ const AppRoutes = () => {
 function App() {
   return (
     <Router>
-      <div className="bg-red-500 text-white p-4">Tailwind Test</div>
       <AppRoutes />
     </Router>
   );
