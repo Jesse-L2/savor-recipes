@@ -6,6 +6,7 @@ import {
 } from "react-router-dom";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import AuthForm from "./components/AuthForm";
+import Landing from "./components/Landing";
 import Dashboard from "./pages/Dashboard";
 
 // Protected route component using our auth context
@@ -20,39 +21,46 @@ const ProtectedRoute = ({ children }) => {
   return user ? children : <Navigate to="/login" />;
 };
 
-// The main app needs to be inside the Router but outside the AuthProvider
-// to avoid problems with useNavigate in the AuthProvider
 const AppRoutes = () => {
+  const { user } = useAuth();
   return (
-    <AuthProvider>
-      <Routes>
-        <Route
-          path="/login"
-          element={<AuthForm route="/token/" method="login" />}
-        />
-        <Route
-          path="/register"
-          element={<AuthForm route="/register/" method="register" />}
-        />
-        <Route
-          path="/dashboard/*"
-          element={
-            <ProtectedRoute>
-              <Dashboard />
-            </ProtectedRoute>
-          }
-        />
-        <Route path="/" element={<Navigate to="/dashboard" />} />
-        <Route path="*" element={<Navigate to="/dashboard" />} />
-      </Routes>
-    </AuthProvider>
+    <Routes>
+      <Route
+        path="/login"
+        element={<AuthForm route="/token/" method="login" />}
+      />
+      <Route
+        path="/register"
+        element={<AuthForm route="/register/" method="register" />}
+      />
+      <Route
+        path="/dashboard/*"
+        element={
+          <ProtectedRoute>
+            <Dashboard />
+          </ProtectedRoute>
+        }
+      />
+      {/* Root route: show Landing if not logged in, Dashboard if logged in */}
+      <Route
+        path="/"
+        element={user ? <Navigate to="/dashboard" /> : <Landing />}
+      />
+      {/* Catch-all: send to dashboard if logged in, else to landing */}
+      <Route
+        path="*"
+        element={user ? <Navigate to="/dashboard" /> : <Landing />}
+      />
+    </Routes>
   );
 };
 
 function App() {
   return (
     <Router>
-      <AppRoutes />
+      <AuthProvider>
+        <AppRoutes />
+      </AuthProvider>
     </Router>
   );
 }
