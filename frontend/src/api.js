@@ -8,6 +8,7 @@ const api = axios.create({
   headers: {
     "Content-Type": "application/json",
   },
+  withCredentials: true,
 });
 
 // Add a request interceptor to include the access token in requests
@@ -16,6 +17,14 @@ api.interceptors.request.use(
     const token = localStorage.getItem(ACCESS_TOKEN);
     if (token) {
       config.headers["Authorization"] = `Bearer ${token}`;
+    }
+    // Add CSRF token for unsafe methods
+    const method = config.method && config.method.toUpperCase();
+    if (["POST", "PUT", "PATCH", "DELETE"].includes(method)) {
+      const csrftoken = getCookie("csrftoken");
+      if (csrftoken) {
+        config.headers["X-CSRFToken"] = csrftoken;
+      }
     }
     return config;
   },
@@ -81,5 +90,21 @@ api.interceptors.response.use(
     return Promise.reject(error);
   }
 );
+
+// Utility to get a cookie by name
+function getCookie(name) {
+  let cookieValue = null;
+  if (document.cookie && document.cookie !== "") {
+    const cookies = document.cookie.split(";");
+    for (let i = 0; i < cookies.length; i++) {
+      const cookie = cookies[i].trim();
+      if (cookie.substring(0, name.length + 1) === name + "=") {
+        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+        break;
+      }
+    }
+  }
+  return cookieValue;
+}
 
 export default api;

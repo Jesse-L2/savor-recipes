@@ -13,10 +13,10 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (username, password) => {
     try {
-      const res = await api.post("/token/", { username, password });
+      const res = await api.post("/api/token/", { username, password });
       localStorage.setItem(ACCESS_TOKEN, res.data.access);
       localStorage.setItem(REFRESH_TOKEN, res.data.refresh);
-      
+
       const decoded = jwtDecode(res.data.access);
       setUser({ username: decoded.username, user_id: decoded.user_id });
       return true;
@@ -28,7 +28,9 @@ export const AuthProvider = ({ children }) => {
 
   const register = async (username, password) => {
     try {
-      await api.post("/register/", { username, password });
+      // Ensure CSRF cookie is set
+      await api.get("/api/csrf/");
+      await api.post("/api/user/register/", { username, password });
       return true;
     } catch (error) {
       console.error("Registration error:", error);
@@ -55,7 +57,7 @@ export const AuthProvider = ({ children }) => {
       const res = await api.post("/token/refresh/", {
         refresh: refreshToken,
       });
-      
+
       if (res.status === 200) {
         localStorage.setItem(ACCESS_TOKEN, res.data.access);
         const decoded = jwtDecode(res.data.access);

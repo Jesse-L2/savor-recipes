@@ -12,12 +12,10 @@ import Dashboard from "./pages/Dashboard";
 // Protected route component using our auth context
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth();
-
   if (loading) {
     // Show loading spinner or message while checking auth status
     return <div className="loading">Loading...</div>;
   }
-
   return user ? children : <Navigate to="/login" />;
 };
 
