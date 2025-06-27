@@ -1,10 +1,10 @@
 // src/components/AuthForm.jsx
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import PropTypes from "prop-types";
 import { useAuth } from "../contexts/AuthContext";
 
-const AuthForm = ({ route, method }) => {
+const AuthForm = ({ method }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -43,6 +43,30 @@ const AuthForm = ({ route, method }) => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-100 to-green-100">
+      <nav className="absolute top-0 left-0 w-full flex justify-center bg-white shadow py-4 z-10">
+        <div className="flex gap-8">
+          <Link
+            to="/login"
+            className={`text-lg font-semibold px-2 py-1 rounded ${
+              method === "login"
+                ? "text-indigo-700 border-b-2 border-indigo-700"
+                : "text-gray-600 hover:text-indigo-700"
+            }`}
+          >
+            Login
+          </Link>
+          <Link
+            to="/register"
+            className={`text-lg font-semibold px-2 py-1 rounded ${
+              method === "register"
+                ? "text-indigo-700 border-b-2 border-indigo-700"
+                : "text-gray-600 hover:text-indigo-700"
+            }`}
+          >
+            Register
+          </Link>
+        </div>
+      </nav>
       <form
         onSubmit={handleSubmit}
         className="bg-white shadow-lg rounded-xl px-10 py-8 w-full max-w-md flex flex-col gap-6"
@@ -87,7 +111,6 @@ const AuthForm = ({ route, method }) => {
 };
 
 AuthForm.propTypes = {
-  route: PropTypes.string.isRequired,
   method: PropTypes.oneOf(["login", "register"]).isRequired,
 };
 
