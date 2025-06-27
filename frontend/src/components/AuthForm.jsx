@@ -10,16 +10,16 @@ const AuthForm = ({ route, method }) => {
   const [error, setError] = useState("");
   const navigate = useNavigate();
   const { login, register } = useAuth();
-  
+
   const name = method === "login" ? "Login" : "Register";
-  
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
-    
+
     try {
       let success;
-      
+
       if (method === "login") {
         success = await login(username, password);
         if (success) {
@@ -40,39 +40,49 @@ const AuthForm = ({ route, method }) => {
       setError(err.message || "An error occurred");
     }
   };
-  
+
   return (
-    <form onSubmit={handleSubmit} className="form-container">
-      <h1>{name}</h1>
-      
-      {error && (
-        <div className="error-message" style={{ color: "red", marginBottom: "10px" }}>
-          {error}
-        </div>
-      )}
-      
-      <input
-        className="form-input"
-        type="text"
-        value={username}
-        onChange={(e) => setUsername(e.target.value)}
-        placeholder="User Name"
-        required
-      />
-      
-      <input
-        className="form-input"
-        type="password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        placeholder="Password"
-        required
-      />
-      
-      <button className="form-button" type="submit">
-        {name}
-      </button>
-    </form>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-100 to-green-100">
+      <form
+        onSubmit={handleSubmit}
+        className="bg-white shadow-lg rounded-xl px-10 py-8 w-full max-w-md flex flex-col gap-6"
+      >
+        <h1 className="text-3xl font-bold text-center text-indigo-900 mb-2">
+          {name}
+        </h1>
+
+        {error && (
+          <div className="bg-red-100 text-red-700 px-4 py-2 rounded mb-2 text-center border border-red-200">
+            {error}
+          </div>
+        )}
+
+        <input
+          className="form-input block w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent text-lg"
+          type="text"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          placeholder="User Name"
+          required
+        />
+
+        <input
+          className="form-input block w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent text-lg"
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          placeholder="Password"
+          required
+        />
+
+        <button
+          className="w-full py-3 mt-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg shadow-md transition duration-200"
+          type="submit"
+        >
+          {name}
+        </button>
+      </form>
+    </div>
   );
 };
 
