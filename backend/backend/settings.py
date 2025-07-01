@@ -45,9 +45,16 @@ INSTALLED_APPS = [
     'users',
     'rest_framework',
     'rest_framework_simplejwt',
+    'rest_framework.authtoken',
     'corsheaders',
     'api',
     'recipes',
+    'django.contrib.sites',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'dj_rest_auth',
+    'dj_rest_auth.registration',
 ]
 
 MIDDLEWARE = [
@@ -59,6 +66,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'allauth.account.middleware.AccountMiddleware',
 ]
 
 ROOT_URLCONF = 'backend.urls'
@@ -103,6 +111,8 @@ REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.IsAuthenticated",
     ],
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 25,
 }
 
 SIMPLE_JWT = {
@@ -214,3 +224,12 @@ CSRF_HEADER_NAME = 'X-CSRFToken'  # The header your frontend will send
 CSRF_COOKIE_PATH = '/'
 CSRF_FAILURE_VIEW = 'django.views.csrf.csrf_failure'
 
+# Best practice for allauth/dj-rest-auth user registration and login
+ACCOUNT_SIGNUP_FIELDS = {
+    'username': {'required': True},
+    'email': {'required': True},
+}
+
+
+ACCOUNT_LOGIN_METHODS = ['username', 'email']
+SITE_ID = 2 # for admin server

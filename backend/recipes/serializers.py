@@ -1,7 +1,7 @@
 # Serializer converts Django model instances to Python data types for rendering in JSON or other content types
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
-from .models import Recipe
+from .models import Recipe, Category, Tag, Equipment
 from users.serializers import PublicUserSerializer
 
 User = get_user_model()
@@ -18,8 +18,23 @@ class RecipeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Recipe
         fields = [
-            "recipe_id", "title", "content", "created_at", "total_time", "images",
+            "id", "title", "content", "created_at", "total_time", "images",
             "ingredients", "ingredient_quantities", "rating", "review_count", "servings",
             "instructions", "author", "author_id"
         ]
-        read_only_fields = ["recipe_id"]
+        read_only_fields = ["id"]
+
+class CategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Category
+        fields = ['id', 'name']
+
+class TagSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Tag
+        fields = ['id', 'name']
+
+class EquipmentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Equipment
+        fields = ['id', 'name']

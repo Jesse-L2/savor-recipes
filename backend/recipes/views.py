@@ -1,7 +1,8 @@
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from rest_framework import viewsets, generics
-from .models import Recipe
-from .serializers import RecipeSerializer, UserSerializer
+from .models import Recipe, Category, Tag, Equipment
+from .serializers import RecipeSerializer, CategorySerializer, TagSerializer, EquipmentSerializer
+from users.serializers import UserSerializer
 from rest_framework.permissions import IsAuthenticated, AllowAny
 
 # Django view is a Python function that takes http requests and returns an http response
@@ -42,7 +43,24 @@ class RecipeDelete(generics.DestroyAPIView):
         user = self.request.user
         return Recipe.objects
     
+User = get_user_model()
+    
 class CreateUserView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
+    permission_classes = [AllowAny]
+
+class CategoryViewSet(viewsets.ModelViewSet):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+    permission_classes = [AllowAny]
+
+class TagViewSet(viewsets.ModelViewSet):
+    queryset = Tag.objects.all()
+    serializer_class = TagSerializer
+    permission_classes = [AllowAny]
+
+class EquipmentViewSet(viewsets.ModelViewSet):
+    queryset = Equipment.objects.all()
+    serializer_class = EquipmentSerializer
     permission_classes = [AllowAny]

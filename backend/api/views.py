@@ -1,4 +1,6 @@
 from django.shortcuts import render
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from recipes.models import Recipe
@@ -9,6 +11,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from recipes.serializers import RecipeSerializer
 from users.serializers import UserSerializer
+from django.http import JsonResponse
 
 class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
@@ -56,6 +59,7 @@ class RecipeDelete(viewsets.ModelViewSet):
         return Recipe.objects.filter(author=user)  
 from rest_framework.generics import CreateAPIView
 
+@method_decorator(csrf_exempt, name='dispatch')
 class RegisterUserView(CreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
@@ -78,3 +82,7 @@ def current_user(request):
     """
     serializer = UserSerializer(request.user)
     return Response(serializer.data)
+
+@ensure_csrf_cookie
+def get_csrf_token(request):
+    return JsonResponse({'detail': 'CSRF cookie set'})
