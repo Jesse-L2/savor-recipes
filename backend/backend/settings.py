@@ -217,7 +217,7 @@ SITE_ID = 1
 # Password reset timeout in seconds (e.g., 1 hour = 3600 seconds)
 PASSWORD_RESET_TIMEOUT = 3600 # 1 hour
 
-# 
+#""" ~~~~~~~~~~~~OLD SETTINGS.PY~~~~~~~~~~~~~~~~~~~
 # """
 # Django settings for backend project.
 
@@ -470,4 +470,4 @@ PASSWORD_RESET_TIMEOUT = 3600 # 1 hour
 
 # # Media files settings (for profile pictures)
 # MEDIA_URL = '/media/'
-# MEDIA_ROOT = BASE_DIR / 'media'
+# MEDIA_ROOT = BASE_DIR / 'media'"""
