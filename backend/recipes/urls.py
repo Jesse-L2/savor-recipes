@@ -1,15 +1,16 @@
 from django.urls import path, include
-from . import views
 from rest_framework.routers import DefaultRouter
+# Removed CategoryViewSet import as it no longer exists
+from .views import TagViewSet, EquipmentViewSet, RecipeViewSet
 
+# Create a router and register our viewsets with it.
 router = DefaultRouter()
-router.register(r'categories', views.CategoryViewSet, basename='category')
-router.register(r'tags', views.TagViewSet, basename='tag')
-router.register(r'equipment', views.EquipmentViewSet, basename='equipment')
+# Removed registration for categories as they are now part of tags
+router.register(r'tags', TagViewSet) # This now includes previous categories
+router.register(r'equipment', EquipmentViewSet)
+router.register(r'recipes', RecipeViewSet)
 
+# The API URLs are now determined automatically by the router.
 urlpatterns = [
-    path('recipes/', views.RecipeListCreate.as_view(), name='recipe-list'),
-    path('recipes/<int:pk>/', views.RecipeViewSet.as_view({'get': 'retrieve'}), name='recipe-detail'),
-    path('recipes/delete/<int:pk>', views.RecipeDelete.as_view(), name='delete-recipe'),
     path('', include(router.urls)),
 ]

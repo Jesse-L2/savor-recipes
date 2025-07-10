@@ -2,10 +2,13 @@ asgiref
 Django
 django-cors-headers
 djangorestframework
+djangorestframework-simplejwt
 sqlparse
 psycopg2-binary
 python-dotenv
 psycopg2
-djangorestframework-simplejwt
+psycopg2-binary
 pandas
 numpy
+Pillow
+django-filter
