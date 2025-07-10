@@ -1,142 +1,108 @@
-import { createContext, useState, useContext, useEffect } from "react";
-import { jwtDecode } from "jwt-decode";
+import React, { createContext, useState, useEffect, useContext } from "react";
+import api from "../services/api"; // Import the configured Axios instance
 import { useNavigate } from "react-router-dom";
-import api from "../api";
-import { ACCESS_TOKEN, REFRESH_TOKEN } from "../constants";
 
-const AuthContext = createContext();
+// Create the AuthContext
+const AuthContext = createContext(null);
 
-export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+// Custom hook to easily access the AuthContext
+export const useAuth = () => {
+  return useContext(AuthContext);
+};
+
+export const AuthContextProvider = ({ children }) => {
+  const [user, setUser] = useState(null); // Stores user data if authenticated
+  const [loading, setLoading] = useState(true); // Manages loading state during initial auth check
   const navigate = useNavigate();
 
-  const login = async (username, password) => {
-    try {
-      const res = await api.post("/api/token/", { username, password });
-      localStorage.setItem(ACCESS_TOKEN, res.data.access);
-      localStorage.setItem(REFRESH_TOKEN, res.data.refresh);
-
-      const decoded = jwtDecode(res.data.access);
-      setUser({ username: decoded.username, user_id: decoded.user_id });
-      return true;
-    } catch (error) {
-      console.error("Login error:", error);
-      return false;
-    }
-  };
-
-  const register = async (username, password) => {
-    try {
-      // Ensure CSRF cookie is set
-      await api.get("/api/csrf/");
-      await api.post("/api/user/register/", { username, password });
-      return true;
-    } catch (error) {
-      console.error("Registration error:", error);
-      return false;
-    }
-  };
-
-  const logout = () => {
-    localStorage.removeItem(ACCESS_TOKEN);
-    localStorage.removeItem(REFRESH_TOKEN);
-    setUser(null);
-    navigate("/login");
-  };
-
-  const refreshToken = async () => {
-    const refreshToken = localStorage.getItem(REFRESH_TOKEN);
-    if (!refreshToken) {
-      setUser(null);
-      setLoading(false);
-      return false;
-    }
-
-    try {
-      const res = await api.post("/token/refresh/", {
-        refresh: refreshToken,
-      });
-
-      if (res.status === 200) {
-        localStorage.setItem(ACCESS_TOKEN, res.data.access);
-        const decoded = jwtDecode(res.data.access);
-        setUser({ username: decoded.username, user_id: decoded.user_id });
-        return true;
-      } else {
-        logout();
-        return false;
+  // Function to get user data from the backend using the access token
+  const fetchUserData = async () => {
+    const accessToken = localStorage.getItem("access_token");
+    if (accessToken) {
+      try {
+        // Fetch user profile data using the API instance
+        const response = await api.get("/users/profile/");
+        setUser(response.data);
+      } catch (error) {
+        console.error("Failed to fetch user data:", error);
+        // If fetching user data fails (e.g., token invalid), clear tokens
+        localStorage.removeItem("access_token");
+        localStorage.removeItem("refresh_token");
+        setUser(null);
+        // No immediate redirect here, let the interceptor handle 401 or let protected routes redirect
       }
-    } catch (error) {
-      console.error("Token refresh error:", error);
-      logout();
-      return false;
     }
+    setLoading(false); // Authentication check is complete
   };
 
-  const checkAuth = async () => {
-    const token = localStorage.getItem(ACCESS_TOKEN);
-    if (!token) {
-      setUser(null);
-      setLoading(false);
-      return;
-    }
-
-    try {
-      const decoded = jwtDecode(token);
-      const tokenExpiration = decoded.exp;
-      const now = Date.now() / 1000;
-
-      if (tokenExpiration < now) {
-        // Token expired, try to refresh
-        await refreshToken();
-      } else {
-        // Token valid
-        setUser({ username: decoded.username, user_id: decoded.user_id });
-      }
-    } catch (error) {
-      console.error("Token validation error:", error);
-      logout();
-    } finally {
-      setLoading(false);
-    }
-  };
-
+  // On initial load, try to fetch user data if tokens exist
   useEffect(() => {
-    checkAuth();
-  }, []);
+    fetchUserData();
+  }, []); // Run only once on component mount
 
+  // Login function
+  const login = async (email, password) => {
+    try {
+      const response = await api.post("/token/", { email, password });
+      const { access, refresh } = response.data;
+
+      localStorage.setItem("access_token", access);
+      localStorage.setItem("refresh_token", refresh);
+
+      // After successful login, fetch user profile
+      await fetchUserData();
+      navigate("/dashboard"); // Redirect to dashboard or home page
+      return true; // Indicate success
+    } catch (error) {
+      console.error("Login failed:", error.response?.data || error.message);
+      setUser(null); // Ensure user is null on failed login
+      throw error; // Re-throw to allow components to handle errors
+    }
+  };
+
+  // Register function
+  const register = async (userData) => {
+    try {
+      const response = await api.post("/users/register/", userData);
+      // After successful registration, you might want to automatically log them in
+      // or redirect them to the login page.
+      console.log("Registration successful:", response.data);
+      // Optionally, call login directly if you want auto-login after register
+      // await login(userData.email, userData.password);
+      navigate("/login"); // Redirect to login page after successful registration
+      return true;
+    } catch (error) {
+      console.error(
+        "Registration failed:",
+        error.response?.data || error.message
+      );
+      throw error;
+    }
+  };
+
+  // Logout function
+  const logout = () => {
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("refresh_token");
+    setUser(null);
+    navigate("/login"); // Redirect to login page on logout
+  };
+
+  // Context value to be provided to consumers
+  const authContextValue = {
+    user,
+    isAuthenticated: !!user, // Boolean flag for authentication status
+    loading,
+    login,
+    register,
+    logout,
+    fetchUserData, // Expose fetchUserData for manual refresh if needed
+  };
+
+  // Provide the context value to children
   return (
-    <AuthContext.Provider
-      value={{
-        user,
-        loading,
-        login,
-        register,
-        logout,
-        refreshToken,
-        checkAuth,
-      }}
-    >
+    <AuthContext.Provider value={authContextValue}>
       {children}
     </AuthContext.Provider>
   );
 };
-
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error("useAuth must be used within an AuthProvider");
-  }
-  return context;
-};
-
-function Logout() {
-  localStorage.clear(); // clear refresh and access token
-  return <Navigate to="/login" />;
-}
-
-function RegisterLogout() {
-  localStorage.clear();
-  return <Register />;
-}

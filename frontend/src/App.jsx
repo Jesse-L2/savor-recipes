@@ -1,65 +1,112 @@
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  Navigate,
-} from "react-router-dom";
-import { AuthProvider, useAuth } from "./contexts/AuthContext";
-import AuthForm from "./components/AuthForm";
-import Landing from "./components/Landing";
-import Dashboard from "./pages/Dashboard";
+import React from "react";
+import { Routes, Route, Navigate } from "react-router-dom"; // Ensure Navigate is imported
+import { useAuth } from "./contexts/AuthContext"; // Corrected import path
+import HomePage from "./pages/HomePage";
+import LoginPage from "./pages/LoginPage";
+import RegisterPage from "./pages/RegisterPage";
+import DashboardPage from "./pages/DashboardPage";
+import RecipeFormPage from "./pages/RecipeFormPage";
+import RecipeDetailPage from "./pages/RecipeDetailPage";
+import ProfilePage from "./pages/ProfilePage";
+import NotFoundPage from "./pages/NotFoundPage";
+import ForgotPasswordPage from "./pages/ForgotPasswordPage"; // Import new password reset pages
+import ResetPasswordConfirmPage from "./pages/ResetPasswordConfirmPage"; // Import new password reset pages
+import Navbar from "./components/Navbar";
+import LoadingSpinner from "./components/LoadingSpinner";
 
-// Protected route component using our auth context
+// ProtectedRoute component to guard routes that require authentication
 const ProtectedRoute = ({ children }) => {
-  const { user, loading } = useAuth();
-  if (loading) {
-    // Show loading spinner or message while checking auth status
-    return <div className="loading">Loading...</div>;
-  }
-  return user ? children : <Navigate to="/login" />;
-};
+  const { isAuthenticated, loading } = useAuth();
 
-const AppRoutes = () => {
-  const { user } = useAuth();
-  return (
-    <Routes>
-      <Route
-        path="/login"
-        element={<AuthForm route="/token/" method="login" />}
-      />
-      <Route
-        path="/register"
-        element={<AuthForm route="/register/" method="register" />}
-      />
-      <Route
-        path="/dashboard/*"
-        element={
-          <ProtectedRoute>
-            <Dashboard />
-          </ProtectedRoute>
-        }
-      />
-      {/* Root route: show Landing if not logged in, Dashboard if logged in */}
-      <Route
-        path="/"
-        element={user ? <Navigate to="/dashboard" /> : <Landing />}
-      />
-      {/* Catch-all: send to dashboard if logged in, else to landing */}
-      <Route
-        path="*"
-        element={user ? <Navigate to="/dashboard" /> : <Landing />}
-      />
-    </Routes>
-  );
+  if (loading) {
+    // Show a loading spinner while authentication status is being checked
+    return <LoadingSpinner />;
+  }
+
+  // If not authenticated, redirect to login page
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
+
+  // If authenticated, render the children (the protected component)
+  return children;
 };
 
 function App() {
+  const { loading } = useAuth(); // Get loading state from AuthContext
+
+  if (loading) {
+    // Show a global loading spinner while the initial auth check is happening
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <LoadingSpinner />
+      </div>
+    );
+  }
+
   return (
-    <Router>
-      <AuthProvider>
-        <AppRoutes />
-      </AuthProvider>
-    </Router>
+    <div className="min-h-screen flex flex-col">
+      {/* Navbar will be present on all pages */}
+      <Navbar />
+
+      <main className="flex-grow container mx-auto px-4 py-8">
+        <Routes>
+          {/* Public Routes */}
+          <Route path="/" element={<HomePage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+          <Route path="/recipes/:slug" element={<RecipeDetailPage />} />
+
+          {/* Password Reset Routes */}
+          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+          {/* uidb64 and token are URL parameters provided by Django's password reset email link */}
+          <Route
+            path="/reset-password-confirm/:uidb64/:token"
+            element={<ResetPasswordConfirmPage />}
+          />
+
+          {/* Protected Routes - require authentication */}
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute>
+                <DashboardPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/recipes/new"
+            element={
+              <ProtectedRoute>
+                <RecipeFormPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/recipes/:slug/edit"
+            element={
+              <ProtectedRoute>
+                <RecipeFormPage /> {/* Re-use form for editing */}
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute>
+                <ProfilePage />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Catch-all route for 404 Not Found */}
+          <Route path="*" element={<NotFoundPage />} />
+        </Routes>
+      </main>
+
+      {/* Optional: Add a Footer component here */}
+      {/* <Footer /> */}
+    </div>
   );
 }
 

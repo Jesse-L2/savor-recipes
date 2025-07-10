@@ -1,3 +1,33 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Apply the Inter font globally and set a default background/text color */
+body {
+  font-family: "Inter", sans-serif;
+  @apply bg-gray-50 text-gray-800; /* Tailwind classes for background and text color */
+}
+
+/* Basic styling for focus states to ensure accessibility */
+*:focus {
+  @apply outline-none ring-2 ring-primary ring-offset-2;
+}
+
+/* Custom scrollbar styles (optional, for better aesthetics) */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-gray-200 rounded-full;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-primary rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-primary-dark; /* Assuming you define a darker shade of primary */
+}
